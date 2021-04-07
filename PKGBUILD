@@ -20,14 +20,17 @@ _extname="_Win"
 source=("git+https://github.com/meganz/MEGAsync.git#tag=v${pkgver}${_extname}"
         "meganz-sdk::git+https://github.com/meganz/sdk.git"
         "pdfium.patch"
-        "ffmpeg.patch")
+        "ffmpeg.patch"
+        "0001-Enable-support-on-Linux-aarch64.patch")
 sha256sums=('SKIP'
             'SKIP'
             '3a03d20165ebfb523644229bd650a2d0e51506c9555a1a9b28c61d07b8f28d7a'
-            '81dee8a4cf16ab92492799d5cd63272d43409f2b83b9d66768e56b0be9c39dd0')
+            '81dee8a4cf16ab92492799d5cd63272d43409f2b83b9d66768e56b0be9c39dd0'
+            'bb2af18de202582535d9a3a0cf63b92a11bcad5f61713bbf36697300c647b859')
 
 prepare() {
     cd "MEGAsync"
+	patch -Np1 -i "../0001-Enable-support-on-Linux-aarch64.patch"
     git submodule init
     git config submodule.src/MEGASync/mega.url "../meganz-sdk"
     git submodule update
@@ -64,6 +67,7 @@ build() {
         --prefix="${srcdir}/MEGAsync/src/MEGASync/mega/bindings/qt/3rdparty"
 
     # build megasync
+    export QMAKESPEC=/usr/lib/qt/mkspecs/linux-g++
     cd "../.."
     qmake-qt5 \
         "CONFIG += FULLREQUIREMENTS" \
